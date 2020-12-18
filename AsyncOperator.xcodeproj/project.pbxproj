@@ -15,8 +15,23 @@
 		739DD566258C80050057A867 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 739DD564258C80050057A867 /* Main.storyboard */; };
 		739DD568258C80060057A867 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 739DD567258C80060057A867 /* Assets.xcassets */; };
 		739DD56B258C80060057A867 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 739DD569258C80060057A867 /* LaunchScreen.storyboard */; };
-		739DD570258C83330057A867 /* AsyncOperator.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 739DD539258C770F0057A867 /* AsyncOperator.framework */; };
+		739DD571258C981F0057A867 /* AsyncOperator.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 739DD539258C770F0057A867 /* AsyncOperator.framework */; };
+		739DD572258C981F0057A867 /* AsyncOperator.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 739DD539258C770F0057A867 /* AsyncOperator.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		739DD573258C981F0057A867 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				739DD572258C981F0057A867 /* AsyncOperator.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		739DD539258C770F0057A867 /* AsyncOperator.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AsyncOperator.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -45,7 +60,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				739DD570258C83330057A867 /* AsyncOperator.framework in Frameworks */,
+				739DD571258C981F0057A867 /* AsyncOperator.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -141,6 +156,7 @@
 				739DD558258C80040057A867 /* Sources */,
 				739DD559258C80040057A867 /* Frameworks */,
 				739DD55A258C80040057A867 /* Resources */,
+				739DD573258C981F0057A867 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -301,7 +317,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.3;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -358,7 +374,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -382,6 +398,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = AsyncOperator/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -408,6 +425,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = AsyncOperator/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

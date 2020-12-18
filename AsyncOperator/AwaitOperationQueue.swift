@@ -29,7 +29,7 @@ public class AwaitOperationQueue {
     
     public typealias FinishCalback = () -> Void
     
-    private var queue: DispatchQueue = DispatchQueue(label: "AsyncOperator", qos: .userInteractive, attributes: [], autoreleaseFrequency: .workItem, target: nil)
+    private var queue: DispatchQueue
     private var operationQueue: OperationQueue = {
         let operationQueue = OperationQueue()
         operationQueue.maxConcurrentOperationCount = 1
@@ -39,18 +39,26 @@ public class AwaitOperationQueue {
     private var finishCalbacks : [FinishCalback] = []
     
     private var queues: [Queue] = []
-
-    public init(_ queues: Queue...) {
+    
+    private let start = CFAbsoluteTimeGetCurrent()
+    
+    private var name: String
+    
+    public init(name: String,_ queues: Queue...) {
+        //print("[🌦🌦] AwaitOperationQueue init")
+        self.name = name
         self.queues = queues
+        self.queue = DispatchQueue(label: "\(self.name)_OperationQueue", qos: .userInteractive, attributes: [], autoreleaseFrequency: .workItem, target: nil)
     }
     
     public func excute() {
+        print("[🌦🌦][\(self.name)] AwaitOperationQueue excute")
         self.queue.async {
             var ops: [Operation] = []
             for queue in self.queues {
                 switch queue {
                 case .qos(let value):
-                    self.queue = DispatchQueue(label: "AsyncOperator", qos: value, attributes: [], autoreleaseFrequency: .workItem, target: nil)
+                    self.queue = DispatchQueue(label: "\(self.name)_OperationQueue", qos: value, attributes: [], autoreleaseFrequency: .workItem, target: nil)
                 case .finish(let value):
                     self.finishCalbacks.append(value)
                 case .sync(let syncOperation):
@@ -70,7 +78,11 @@ public class AwaitOperationQueue {
                 }
             }
             self.operationQueue.addOperations(ops, waitUntilFinished: true)
-            self.finishCalbacks.forEach { $0() }
+            self.finishCalbacks.forEach { calback in
+                //print("[🌦🌦] AwaitOperationQueue finish")
+                calback()
+            }
+            print("[🌦🌦][\(self.name)] AwaitOperationQueue finish in \(CFAbsoluteTimeGetCurrent() - self.start) s")
         }
     }
     
@@ -81,7 +93,7 @@ public class AwaitOperationQueue {
     }
     
     deinit {
-        print("deinit")
+        //print("[🌦🌦] AwaitOperationQueue deinit")
     }
 }
 
