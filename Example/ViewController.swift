@@ -20,55 +20,63 @@ class ViewController: UIViewController {
             Thread.sleep(forTimeInterval: 1)
             print("op 1 block finish")
         }
+        op1.name = "op1"
         
         let op2 = BlockOperation {
             print("op 2 block start")
             Thread.sleep(forTimeInterval: 1)
             print("op 2 block finish")
         }
+        op2.name = "op2"
         
         let op3 = BlockOperation {
             print("op 3 block start")
             Thread.sleep(forTimeInterval: 1)
             print("op 3 block finish")
         }
+        op3.name = "op3"
         
         let op4 = BlockOperation {
             print("op 4 block start")
             Thread.sleep(forTimeInterval: 1)
             print("op 4 block finish")
         }
-        
+        op4.name = "op4"
         
         let op5 = BlockOperation {
             print("op 5 block start")
             Thread.sleep(forTimeInterval: 5)
             print("op 5 block finish")
         }
+        op5.name = "op5"
         
         let op6 = BlockOperation {
             print("op 6 block start")
             Thread.sleep(forTimeInterval: 1)
             print("op 6 block finish")
         }
+        op6.name = "op6"
         
         let op7 = BlockOperation {
             print("op 7 block start")
             Thread.sleep(forTimeInterval: 3)
             print("op 7 block finish")
         }
+        op7.name = "op7"
         
         let op8 = BlockOperation {
             print("op 8 block start")
             Thread.sleep(forTimeInterval: 11)
             print("op 8 block finish")
         }
+        op8.name = "op8"
         
         let op9 = BlockOperation {
             print("op 9 block start")
             Thread.sleep(forTimeInterval: 2)
             print("op 9 block finish")
         }
+        op9.name = "op9"
         
         let op10 = BlockOperation {
             print("op 10 block start")
@@ -76,8 +84,9 @@ class ViewController: UIViewController {
             print("op 10 block finish")
             
         }
+        op10.name = "op10"
         
-        AwaitOperationQueue(
+        let run = AwaitOperationQueue(
             name: "AwaitOperationQueue",
             .qos(.userInteractive),
             .sync(op1),
@@ -85,7 +94,7 @@ class ViewController: UIViewController {
             .sync(op3),
             .sync(op4),
             .async(.init(
-                name: "ops:[5,6,7,8,9]",
+                name: "ops_group",
                 maxConcurrent: 10,
                 operators:[
                     op5,
@@ -97,13 +106,26 @@ class ViewController: UIViewController {
                     print("Group \(group.name ?? "") all done.")
                 }),
             .sync(op10)
-        ).finish {
+        )
+        
+        run.completed {
             print("finish 1")
-        }.finish {
+        }.completed {
             print("finish 2")
-        }.finish {
+        }.completed {
             print("finish 3")
         }.excute()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            print("cancel")
+            run.cancel()
+        }
+        
+        
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 14) {
+//            print("cancel")
+//            run.isSuspended = false
+//        }
     }
     
     
