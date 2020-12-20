@@ -3,116 +3,130 @@
 ### Code:
 ```swift
 
-let op1 = BlockOperation {
-            print("op1 block start")
+ let op1 = BlockOperation {
+            print("op 1 block start")
             Thread.sleep(forTimeInterval: 1)
-            print("op1 block finish")
+            print("op 1 block finish")
         }
         
         let op2 = BlockOperation {
-            print("op2 block start")
+            print("op 2 block start")
             Thread.sleep(forTimeInterval: 1)
-            print("op2 block finish")
+            print("op 2 block finish")
         }
         
         let op3 = BlockOperation {
-            print("op3 block start")
+            print("op 3 block start")
             Thread.sleep(forTimeInterval: 1)
-            print("op3 block finish")
+            print("op 3 block finish")
         }
         
         let op4 = BlockOperation {
-            print("op4 block start")
+            print("op 4 block start")
             Thread.sleep(forTimeInterval: 1)
-            print("op4 block finish")
+            print("op 4 block finish")
         }
         
         
         let op5 = BlockOperation {
-            print("op5 block start")
+            print("op 5 block start")
             Thread.sleep(forTimeInterval: 5)
-            print("op5 block finish")
+            print("op 5 block finish")
         }
         
         let op6 = BlockOperation {
-            print("op6 block start")
+            print("op 6 block start")
             Thread.sleep(forTimeInterval: 1)
-            print("op6 block finish")
+            print("op 6 block finish")
         }
         
         let op7 = BlockOperation {
-            print("op7 block start")
+            print("op 7 block start")
             Thread.sleep(forTimeInterval: 3)
-            print("op7 block finish")
+            print("op 7 block finish")
         }
         
         let op8 = BlockOperation {
-            print("op8 block start")
+            print("op 8 block start")
             Thread.sleep(forTimeInterval: 11)
-            print("op8 block finish")
+            print("op 8 block finish")
         }
         
         let op9 = BlockOperation {
-            print("op9 block start")
+            print("op 9 block start")
             Thread.sleep(forTimeInterval: 2)
-            print("op9 block finish")
+            print("op 9 block finish")
         }
         
         let op10 = BlockOperation {
-            print("op10 block start")
-             Thread.sleep(forTimeInterval: 2)
-            print("op10 block finish")
-
+            print("op 10 block start")
+            Thread.sleep(forTimeInterval: 2)
+            print("op 10 block finish")
+            
         }
         
-        let opque = AwaitOperationQueue(
+        AwaitOperationQueue(
+            name: "AwaitOperationQueue",
+            .qos(.userInteractive),
             .sync(op1),
             .sync(op2),
             .sync(op3),
             .sync(op4),
-            .async(.init(10, [op5, op6, op7, op8, op9])),
+            .async(.init(
+                name: "ops:[5,6,7,8,9]",
+                maxConcurrent: 10,
+                operators:[
+                    op5,
+                    op6,
+                    op7,
+                    op8,
+                    op9
+                ]){ group in
+                    print("Group \(group.name ?? "") all done.")
+                }),
             .sync(op10)
-        )
-        
-        opque.finish {
+        ).finish {
             print("finish 1")
         }.finish {
             print("finish 2")
         }.finish {
             print("finish 3")
-        }
-        
-        opque.excute()
+        }.excute()
+    }
 
 ```
 
 ### Result
 
 ```
-op1 block start
-op1 block finish
-op2 block start
-op2 block finish
-op3 block start
-op3 block finish
-op4 block start
-op4 block finish
-op5 block start
-op6 block start
-op7 block start
-op8 block start
-op9 block start
-op6 block finish
-op9 block finish
-op7 block finish
-op5 block finish
-op8 block finish
-op10 block start
-op10 block finish
+[🌦][queue:AwaitOperationQueue] excute
+op 1 block start
+op 1 block finish
+op 2 block start
+op 2 block finish
+op 3 block start
+op 3 block finish
+op 4 block start
+op 4 block finish
+op 5 block start
+op 7 block start
+op 6 block start
+op 8 block start
+op 9 block start
+op 6 block finish
+op 9 block finish
+op 7 block finish
+op 5 block finish
+op 8 block finish
+[🌦][queue:AwaitOperationQueue][group:ops:[5,6,7,8,9]] finish in 11.001109957695007 s
+Group ops:[5,6,7,8,9] all done.
+op 10 block start
+op 10 block finish
 finish 1
 finish 2
 finish 3
-deinit
+[🌦][queue:AwaitOperationQueue] finish in 17.016005992889404 s
+[🌦][queue:AwaitOperationQueue] deinit
 
 ```
 
