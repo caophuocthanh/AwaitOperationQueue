@@ -8,22 +8,29 @@
 
 import Foundation
 
-
 public class AwaitOperationQueue {
     
-    public struct Async {
+    public struct AsyncQueue {
+        // required
         var maxConcurrent: Int
         var operators: [Operation]
-        public init(_ maxConcurrent: Int, _ operators: [Operation]) {
+        // optionals
+        public var name: String?
+        var completed: ((AsyncQueue) -> Void)?
+        public init(name: String? = nil, maxConcurrent: Int, operators: [Operation], completed: ((AsyncQueue) -> Void)? = nil) {
             self.maxConcurrent = maxConcurrent
             self.operators = operators
+            
+            self.name = name
+            self.completed = completed
+            
         }
     }
     
     public enum Queue {
         case qos(DispatchQoS)
         case sync(Operation)
-        case async(AwaitOperationQueue.Async)
+        case async(AwaitOperationQueue.AsyncQueue)
         case finish(FinishCalback)
     }
     
@@ -44,21 +51,25 @@ public class AwaitOperationQueue {
     
     private var name: String
     
+    var label: String {
+        return "\(self.name)_AwaitOperationQueue"
+    }
+    
     public init(name: String,_ queues: Queue...) {
         //print("[🌦🌦] AwaitOperationQueue init")
         self.name = name
         self.queues = queues
-        self.queue = DispatchQueue(label: "\(self.name)_OperationQueue", qos: .userInteractive, attributes: [], autoreleaseFrequency: .workItem, target: nil)
+        self.queue = DispatchQueue(label: "\(self.name)_AwaitOperationQueue", qos: .userInteractive, attributes: [], autoreleaseFrequency: .workItem, target: nil)
     }
     
     public func excute() {
-        print("[🌦🌦][\(self.name)] AwaitOperationQueue excute")
+        print("[🌦][queue:\(self.name)] excute")
         self.queue.async {
             var ops: [Operation] = []
             for queue in self.queues {
                 switch queue {
                 case .qos(let value):
-                    self.queue = DispatchQueue(label: "\(self.name)_OperationQueue", qos: value, attributes: [], autoreleaseFrequency: .workItem, target: nil)
+                    self.queue = DispatchQueue(label: self.label, qos: value, attributes: [], autoreleaseFrequency: .workItem, target: nil)
                 case .finish(let value):
                     self.finishCalbacks.append(value)
                 case .sync(let syncOperation):
@@ -66,12 +77,15 @@ public class AwaitOperationQueue {
                 case .async(let group):
                     let asyncOperation = BlockOperation {
                         var _ops: [Operation] = []
-                        let operationQueue = OperationQueue()
-                        operationQueue.maxConcurrentOperationCount = group.maxConcurrent
+                        let _startGroup = CFAbsoluteTimeGetCurrent()
+                        let _operationQueue = OperationQueue()
+                        _operationQueue.maxConcurrentOperationCount = group.maxConcurrent
                         for op in group.operators {
                             _ops.append(op)
                         }
-                        operationQueue.addOperations(_ops, waitUntilFinished: true)
+                        _operationQueue.addOperations(_ops, waitUntilFinished: true)
+                        print("[🌦][queue:\(self.name)][group:\(group.name ?? "nil")] finish in \(CFAbsoluteTimeGetCurrent() - _startGroup) s")
+                        group.completed?(group)
                     }
                     ops.append(asyncOperation)
                     break
@@ -79,10 +93,9 @@ public class AwaitOperationQueue {
             }
             self.operationQueue.addOperations(ops, waitUntilFinished: true)
             self.finishCalbacks.forEach { calback in
-                //print("[🌦🌦] AwaitOperationQueue finish")
                 calback()
             }
-            print("[🌦🌦][\(self.name)] AwaitOperationQueue finish in \(CFAbsoluteTimeGetCurrent() - self.start) s")
+            print("[🌦][queue:\(self.name)] finish in \(CFAbsoluteTimeGetCurrent() - self.start) s")
         }
     }
     
@@ -93,7 +106,7 @@ public class AwaitOperationQueue {
     }
     
     deinit {
-        //print("[🌦🌦] AwaitOperationQueue deinit")
+        print("[🌦][queue:\(self.name)] deinit")
     }
 }
 

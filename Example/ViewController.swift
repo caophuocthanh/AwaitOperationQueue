@@ -10,7 +10,7 @@ import UIKit
 import AsyncOperator
 
 class ViewController: UIViewController {
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
@@ -72,17 +72,30 @@ class ViewController: UIViewController {
         
         let op10 = BlockOperation {
             print("op 10 block start")
-             Thread.sleep(forTimeInterval: 2)
+            Thread.sleep(forTimeInterval: 2)
             print("op 10 block finish")
-
+            
         }
         
-        AwaitOperationQueue(name: "AwaitOperationQueue",
+        AwaitOperationQueue(
+            name: "AwaitOperationQueue",
+            .qos(.userInteractive),
             .sync(op1),
             .sync(op2),
             .sync(op3),
             .sync(op4),
-            .async(.init(10, [op5, op6, op7, op8, op9])),
+            .async(.init(
+                name: "ops:[5,6,7,8,9]",
+                maxConcurrent: 10,
+                operators:[
+                    op5,
+                    op6,
+                    op7,
+                    op8,
+                    op9
+                ]){ group in
+                    print("Group \(group.name ?? "") all done.")
+                }),
             .sync(op10)
         ).finish {
             print("finish 1")
@@ -92,7 +105,7 @@ class ViewController: UIViewController {
             print("finish 3")
         }.excute()
     }
-
-
+    
+    
 }
 
