@@ -106,17 +106,24 @@ class ViewController: UIViewController {
                     print("Group \(group.name ?? "") all done.")
                 }),
             .sync(op10)
+//            .queueCompleted({ (queue) in
+//                switch queue {
+//                case .sync(let op):
+//                    print("======> sync completed:", op.name ?? "")
+//                case .async(let ops):
+//                    print("======> async completed:", ops.operators.map { $0.name ?? ""})
+//                default: break
+//                }
+//            })
         )
         
-        run.completed {
-            print("finish 1")
+        run.canceled {
+            print("canceled")
         }.completed {
-            print("finish 2")
-        }.completed {
-            print("finish 3")
+            print("finish all task")
         }.excute()
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
             print("cancel")
             run.cancel()
         }
