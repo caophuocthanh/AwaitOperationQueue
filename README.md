@@ -65,7 +65,7 @@
             
         }
         
-        AwaitOperationQueue(
+        let worker = AwaitOperationQueue(
             name: "AwaitOperationQueue",
             .qos(.userInteractive),
             .sync(op1),
@@ -85,13 +85,13 @@
                     print("Group \(group.name ?? "") all done.")
                 }),
             .sync(op10)
-        ).finish {
+        )
+        
+        worker.finish {
             print("finish 1")
-        }.finish {
-            print("finish 2")
-        }.finish {
-            print("finish 3")
-        }.excute()
+        }
+        
+        worker.excute()
     }
 
 ```
